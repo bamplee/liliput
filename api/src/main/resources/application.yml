@@ -7,6 +7,12 @@ spring:
     url: jdbc:h2:mem:liliput;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL
     username: sa
     initialize: true
+  social:
+    facebook:
+      appId: '{cipher}bc0bbce687e4402585856c6ebe879ff9f227904cd29279cafc9c9c0123fc7703'
+      appSecret: '{cipher}6f5e7423c580c319d917ae847461a31774d5b5117d521e7b911787943b93adf1cb8507eebada844aa4c3bb535e284deb890d77cb60552d24512ccf7ac9c920c8'
+  profiles:
+    active: local
 
 spring.jpa:
   database: MYSQL
@@ -27,3 +33,11 @@ security:
   user:
     name: admin
     password: test
+
+feign:
+  client:
+    config:
+      accountKitApi:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic

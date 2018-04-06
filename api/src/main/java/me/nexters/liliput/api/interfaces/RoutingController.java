@@ -1,7 +1,7 @@
 package me.nexters.liliput.api.interfaces;
 
-import me.nexters.liliput.api.domain.route.service.RouteLogService;
-import me.nexters.liliput.api.domain.shorten.service.ShortUrlService;
+import me.nexters.liliput.api.domain.service.RouteLogService;
+import me.nexters.liliput.api.domain.service.ShortUrlService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;

@@ -1,6 +1,6 @@
 package me.nexters.liliput.api.interfaces.v1;
 
-import me.nexters.liliput.api.domain.shorten.service.ShortUrlService;
+import me.nexters.liliput.api.domain.service.ShortUrlService;
 import me.nexters.liliput.api.interfaces.v1.dto.request.V1ShortUrlDeleteRequest;
 import me.nexters.liliput.api.interfaces.v1.dto.request.V1ShortUrlUpdateRequest;
 import me.nexters.liliput.api.interfaces.v1.dto.request.V1ShortUrlCreateRequest;
