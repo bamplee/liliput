@@ -14,12 +14,6 @@
     <button onclick="email_btn_onclick();">이메일로 로그인</button>
 </div>
 
-<form id="my_form" name="my_form" action="/sample/login/success" method="GET" style="display: none;">
-    <input type="text" id="code" name="code">
-    <input type="text" id="csrf_nonce" name="csrf_nonce">
-    <input type="submit" value="Submit">
-</form>
-
 <!--  -->
 <script src="https://sdk.accountkit.com/ko_KR/sdk.js"></script>
 <script>
@@ -37,11 +31,8 @@
     // login callback
     function loginCallback(response) {
         console.log('loginCallback');
-        console.log(response);
         if (response.status === "PARTIALLY_AUTHENTICATED") {
-            document.getElementById("code").value = response.code;
-            document.getElementById("csrf_nonce").value = response.state;
-            document.getElementById("my_form").submit();
+            post(response.code);
         }
         else if (response.status === "NOT_AUTHENTICATED") {
             // handle authentication failure
@@ -66,6 +57,25 @@
     function email_btn_onclick() {
         var email_address = document.getElementById("email").value;
         AccountKit.login('EMAIL', {emailAddress: email_address}, loginCallback);
+    }
+
+    function post(code) {
+        function reqListener() {
+            console.log(this.response);
+        }
+
+        var newXHR = new XMLHttpRequest();
+
+        newXHR.addEventListener('load', reqListener);
+
+        newXHR.open('POST', 'http://localhost:8080/api/v1/users');
+        newXHR.setRequestHeader("Content-Type", "application/json");
+
+        var jsonData = {code: code};
+
+        var formattedJsonData = JSON.stringify(jsonData);
+
+        newXHR.send(formattedJsonData);
     }
 </script>
 </body>

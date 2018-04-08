@@ -4,7 +4,7 @@ import me.nexters.liliput.api.api.feign.facebook.dto.AccountKitAccessResponse;
 import me.nexters.liliput.api.api.feign.facebook.dto.AccountKitProfileResponse;
 import me.nexters.liliput.api.api.feign.facebook.dto.DeleteAccountResponseResponse;
 
-public interface UserService {
+public interface AccountKitService {
     AccountKitAccessResponse validateAuthorizationCode(String code);
 
     AccountKitProfileResponse getProfile(String accessToken);
