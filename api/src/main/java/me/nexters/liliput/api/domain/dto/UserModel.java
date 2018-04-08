@@ -9,5 +9,5 @@ public class UserModel {
     private String userName;
     private String userEmail;
     private String userPhone;
-    private String userType;
+    private String role;
 }

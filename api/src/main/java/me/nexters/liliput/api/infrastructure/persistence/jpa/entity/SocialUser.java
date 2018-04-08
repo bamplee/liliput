@@ -1,6 +1,8 @@
 package me.nexters.liliput.api.infrastructure.persistence.jpa.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +13,8 @@ import java.io.Serializable;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "SOCIAL_USER")
 public class SocialUser extends BaseEntity implements Serializable {
     @Id

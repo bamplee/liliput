@@ -12,7 +12,7 @@ public class SamplePageController {
         this.accountKitService = accountKitService;
     }
 
-    @GetMapping("/sample/login")
+    @GetMapping("/sample/page")
     public String login() {
         return "sample-login";
     }

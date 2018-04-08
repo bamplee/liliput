@@ -63,7 +63,7 @@ public class SocialUserServiceImpl implements SocialUserService {
         userModel.setUserEmail(socialUser.getEmail());
         userModel.setUserPhone(socialUser.getPhone());
         userModel.setProviderType(socialUser.getProviderType());
-        userModel.setUserType(socialUser.getUserType());
+        userModel.setRole(socialUser.getUserType());
         return userModel;
     }
 }
