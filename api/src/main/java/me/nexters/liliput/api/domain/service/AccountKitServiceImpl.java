@@ -19,7 +19,7 @@ import java.util.Formatter;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class AccountKitServiceImpl implements AccountKitService {
     private static final String HASH_ALGORITHM = "HmacSHA256";
     private static final String GRANT_TYPE = "authorization_code";
     private final AccountApiClient accountApiClient;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Value("${spring.social.facebook.appSecret}")
     private String appSecret;
 
-    public UserServiceImpl(AccountApiClient accountApiClient) {
+    public AccountKitServiceImpl(AccountApiClient accountApiClient) {
         this.accountApiClient = accountApiClient;
     }
 
