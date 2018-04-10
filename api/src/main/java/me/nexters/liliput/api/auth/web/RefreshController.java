@@ -17,17 +17,16 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/refresh")
 public class RefreshController {
-
-	@GetMapping
-	public ResponseEntity<String> refreshToken(Authentication authentication) {
-		System.out.println("refreshToken");
-		UserDetails userDetails = new UserDetailsImpl(authentication.getPrincipal().toString(), new ArrayList<>(authentication.getAuthorities()));
-
-		String token = JwtUtil.refreshToken(userDetails);
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.add(JwtInfo.HEADER_NAME, token);
-
-		return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
-	}
+    @GetMapping
+    public ResponseEntity<String> refreshToken(Authentication authentication) {
+        System.out.println("refreshToken");
+        UserDetails userDetails = new UserDetailsImpl(authentication.getPrincipal()
+                                                                    .toString(), new ArrayList<>(authentication.getAuthorities()));
+        String token = JwtUtil.refreshToken(userDetails);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JwtInfo.HEADER_NAME, token);
+        return ResponseEntity.status(HttpStatus.OK)
+                             .headers(headers)
+                             .build();
+    }
 }

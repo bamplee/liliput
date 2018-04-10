@@ -32,7 +32,8 @@
     function loginCallback(response) {
         console.log('loginCallback');
         if (response.status === "PARTIALLY_AUTHENTICATED") {
-            post(response.code);
+            console.log(response);
+//            post(response.code, callback);
         }
         else if (response.status === "NOT_AUTHENTICATED") {
             // handle authentication failure
@@ -59,16 +60,13 @@
         AccountKit.login('EMAIL', {emailAddress: email_address}, loginCallback);
     }
 
-    function post(code) {
-        function reqListener() {
-            console.log(this.response);
-        }
+    function post(code, callback) {
 
         var newXHR = new XMLHttpRequest();
 
-        newXHR.addEventListener('load', reqListener);
+        newXHR.addEventListener('load', callback);
 
-        newXHR.open('POST', 'http://localhost:8080/api/v1/users');
+        newXHR.open('POST', 'http://localhost:8080/login');
         newXHR.setRequestHeader("Content-Type", "application/json");
 
         var jsonData = {code: code};
@@ -76,6 +74,10 @@
         var formattedJsonData = JSON.stringify(jsonData);
 
         newXHR.send(formattedJsonData);
+    }
+
+    function callback() {
+        console.log(this.response);
     }
 </script>
 </body>

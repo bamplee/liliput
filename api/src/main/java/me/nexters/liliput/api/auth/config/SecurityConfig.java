@@ -3,13 +3,11 @@ package me.nexters.liliput.api.auth.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.nexters.liliput.api.auth.process.BaseSecurityHandler;
 import me.nexters.liliput.api.auth.process.ajax.AjaxAuthenticationProvider;
-import me.nexters.liliput.api.auth.process.ajax.AjaxUserDetailsService;
 import me.nexters.liliput.api.auth.process.ajax.filter.AjaxAuthenticationFilter;
 import me.nexters.liliput.api.auth.process.jwt.JwtAuthenticationProvider;
-import me.nexters.liliput.api.auth.process.jwt.JwtUserDetailsService;
 import me.nexters.liliput.api.auth.process.jwt.filter.JwtAuthenticationFilter;
 import me.nexters.liliput.api.auth.process.jwt.matcher.SkipPathRequestMatcher;
-import org.springframework.beans.factory.annotation.Autowired;
+import me.nexters.liliput.api.domain.service.SocialUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +19,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -31,27 +28,29 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@ComponentScan("me.nexters.liliput.api.auth")
+@ComponentScan("me.nexters.liliput.api")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private JwtAuthenticationProvider jwtProvider;
-    @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
-    @Autowired
-    private AjaxAuthenticationProvider ajaxProvider;
-    @Autowired
-    private AjaxUserDetailsService ajaxUserDetailsService;
-    @Autowired
-    private BaseSecurityHandler securityHandler;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final JwtAuthenticationProvider jwtProvider;
+    private final AjaxAuthenticationProvider ajaxProvider;
+    private final BaseSecurityHandler securityHandler;
+    private final ObjectMapper objectMapper;
+    private final SocialUserService socialUserService;
     private static final String LOGIN_ENTRY_POINT = "/login";
     private static final String TOKEN_ENTRY_POINT = "/token";
     private static final String ERROR_ENTRY_POINT = "/error";
-    private static final String ROOT_ENTRY_POINT = "/**";
     private static final String SAMPLE_LOGIN_PAGE = "/sample/page";
+    private static final String API_ENTRY_PAGE = "/api/v1/**";
+
+    public SecurityConfig(JwtAuthenticationProvider jwtProvider,
+                          AjaxAuthenticationProvider ajaxProvider,
+                          BaseSecurityHandler securityHandler,
+                          ObjectMapper objectMapper, SocialUserService socialUserService) {
+        this.jwtProvider = jwtProvider;
+        this.ajaxProvider = ajaxProvider;
+        this.securityHandler = securityHandler;
+        this.objectMapper = objectMapper;
+        this.socialUserService = socialUserService;
+    }
 
     @Override
     public void configure(WebSecurity web) {
@@ -77,14 +76,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers(ROOT_ENTRY_POINT)
-            .authenticated()
-            .antMatchers(TOKEN_ENTRY_POINT)
-            .permitAll()
-            .antMatchers(LOGIN_ENTRY_POINT)
-            .permitAll()
-            .antMatchers(ERROR_ENTRY_POINT)
-            .permitAll();
+            .antMatchers(API_ENTRY_PAGE)
+            .authenticated();
     }
 
     @Bean
@@ -94,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AjaxAuthenticationFilter ajaxAuthenticationFilter() throws Exception {
-        AjaxAuthenticationFilter filter = new AjaxAuthenticationFilter(antPathRequestMatcher(), objectMapper);
+        AjaxAuthenticationFilter filter = new AjaxAuthenticationFilter(antPathRequestMatcher(), objectMapper, socialUserService);
         filter.setAuthenticationManager(authenticationManager());
         filter.setAuthenticationSuccessHandler(securityHandler);
         filter.setAuthenticationFailureHandler(securityHandler);

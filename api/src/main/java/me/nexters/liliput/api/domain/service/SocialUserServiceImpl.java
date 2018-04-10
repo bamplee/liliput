@@ -44,7 +44,7 @@ public class SocialUserServiceImpl implements SocialUserService {
                                                        .getAddress())
                                     .orElse(""));
         socialUser.setProviderType("FACEBOOK");
-        socialUser.setUserType("USER");
+        socialUser.setUserType("ROLE_USER");
         return transform(socialUserRepository.save(socialUser));
     }
 
@@ -52,7 +52,8 @@ public class SocialUserServiceImpl implements SocialUserService {
     public UserModel findByProviderUserId(String providerUserId) {
         SocialUser user = socialUserRepository.findByProviderUserId(providerUserId);
         if (Objects.isNull(user)) {
-            throw new UsernameNotFoundException("UsernameNotFound [" + providerUserId + "]");
+            return this.joinByAccountKitUser(providerUserId);
+//            throw new UsernameNotFoundException("UsernameNotFound [" + providerUserId + "]");
         }
         return transform(user);
     }

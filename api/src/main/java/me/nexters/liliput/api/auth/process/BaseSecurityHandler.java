@@ -18,20 +18,20 @@ import java.util.ArrayList;
 
 @Component
 public class BaseSecurityHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler {
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication) {
+        UserDetails userDetails = new UserDetailsImpl(authentication.getPrincipal()
+                                                                    .toString(), new ArrayList<>(authentication.getAuthorities()));
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setHeader(JwtInfo.HEADER_NAME, JwtUtil.createToken(userDetails));
+    }
 
-	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request,
-	                                    HttpServletResponse response,
-	                                    Authentication authentication) {
-		UserDetails userDetails = new UserDetailsImpl(authentication.getPrincipal().toString(), new ArrayList<>(authentication.getAuthorities()));
-		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-		response.setHeader(JwtInfo.HEADER_NAME, JwtUtil.createToken(userDetails));
-	}
-
-	@Override
-	public void onAuthenticationFailure(HttpServletRequest request,
-	                                    HttpServletResponse response,
-	                                    AuthenticationException exception) throws HttpResponseException {
-		throw new HttpResponseException(HttpStatus.FORBIDDEN.value(), exception.getMessage());
-	}
+    @Override
+    public void onAuthenticationFailure(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        AuthenticationException exception) throws HttpResponseException {
+        throw new HttpResponseException(HttpStatus.FORBIDDEN.value(), exception.getMessage());
+    }
 }

@@ -1,6 +1,8 @@
 package me.nexters.liliput.api.auth.process.ajax.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.nexters.liliput.api.domain.dto.UserModel;
+import me.nexters.liliput.api.domain.service.SocialUserService;
 import me.nexters.liliput.api.interfaces.v1.dto.request.V1SocialUserJoinRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,10 +18,14 @@ import java.nio.file.AccessDeniedException;
 
 public class AjaxAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private final ObjectMapper objectMapper;
+    private final SocialUserService socialUserService;
 
-    public AjaxAuthenticationFilter(RequestMatcher requestMatcher, ObjectMapper objectMapper) {
+    public AjaxAuthenticationFilter(RequestMatcher requestMatcher,
+                                    ObjectMapper objectMapper,
+                                    SocialUserService socialUserService) {
         super(requestMatcher);
         this.objectMapper = objectMapper;
+        this.socialUserService = socialUserService;
     }
 
     @Override
@@ -28,7 +34,11 @@ public class AjaxAuthenticationFilter extends AbstractAuthenticationProcessingFi
                                                                                                           IOException {
         if (isJson(request)) {
             V1SocialUserJoinRequest joinRequest = objectMapper.readValue(request.getReader(), V1SocialUserJoinRequest.class);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(joinRequest.getCode(), "");
+            UserModel userModel = socialUserService
+                .findByProviderUserId(
+                    joinRequest.getCode());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userModel.getUserId(),
+                                                                                                         userModel.getUserId());
             return getAuthenticationManager().authenticate(authentication);
         } else {
             throw new AccessDeniedException("Don't use content type for " + request.getContentType());
