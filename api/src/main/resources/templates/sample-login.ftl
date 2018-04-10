@@ -68,7 +68,7 @@
 
         newXHR.addEventListener('load', reqListener);
 
-        newXHR.open('POST', 'http://localhost:8080/api/v1/users');
+        newXHR.open('POST', 'http://localhost:8080/login');
         newXHR.setRequestHeader("Content-Type", "application/json");
 
         var jsonData = {code: code};

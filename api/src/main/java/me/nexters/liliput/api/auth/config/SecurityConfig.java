@@ -9,6 +9,7 @@ import me.nexters.liliput.api.auth.process.jwt.JwtAuthenticationProvider;
 import me.nexters.liliput.api.auth.process.jwt.JwtUserDetailsService;
 import me.nexters.liliput.api.auth.process.jwt.filter.JwtAuthenticationFilter;
 import me.nexters.liliput.api.auth.process.jwt.matcher.SkipPathRequestMatcher;
+import me.nexters.liliput.api.domain.service.SocialUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,7 +32,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@ComponentScan("me.nexters.liliput.api.auth")
+@ComponentScan("me.nexters.liliput.api")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthenticationProvider jwtProvider;
@@ -47,11 +48,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private ObjectMapper objectMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private SocialUserService socialUserService;
     private static final String LOGIN_ENTRY_POINT = "/login";
     private static final String TOKEN_ENTRY_POINT = "/token";
     private static final String ERROR_ENTRY_POINT = "/error";
     private static final String ROOT_ENTRY_POINT = "/**";
     private static final String SAMPLE_LOGIN_PAGE = "/sample/page";
+    private static final String API_START_POINT = "/api/v1/**";
 
     @Override
     public void configure(WebSecurity web) {
@@ -84,6 +88,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(LOGIN_ENTRY_POINT)
             .permitAll()
             .antMatchers(ERROR_ENTRY_POINT)
+            .permitAll()
+            .antMatchers(API_START_POINT)
             .permitAll();
     }
 
@@ -94,7 +100,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AjaxAuthenticationFilter ajaxAuthenticationFilter() throws Exception {
-        AjaxAuthenticationFilter filter = new AjaxAuthenticationFilter(antPathRequestMatcher(), objectMapper);
+        AjaxAuthenticationFilter filter = new AjaxAuthenticationFilter(antPathRequestMatcher(), objectMapper, socialUserService);
         filter.setAuthenticationManager(authenticationManager());
         filter.setAuthenticationSuccessHandler(securityHandler);
         filter.setAuthenticationFailureHandler(securityHandler);
@@ -103,7 +109,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public SkipPathRequestMatcher skipPathRequestMatcher() {
-        return new SkipPathRequestMatcher(Arrays.asList(LOGIN_ENTRY_POINT, TOKEN_ENTRY_POINT, ERROR_ENTRY_POINT, SAMPLE_LOGIN_PAGE));
+        return new SkipPathRequestMatcher(Arrays.asList(LOGIN_ENTRY_POINT, TOKEN_ENTRY_POINT, ERROR_ENTRY_POINT, API_START_POINT, SAMPLE_LOGIN_PAGE));
     }
 
     @Bean
