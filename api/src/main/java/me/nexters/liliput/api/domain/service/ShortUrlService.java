@@ -2,14 +2,18 @@ package me.nexters.liliput.api.domain.service;
 
 import me.nexters.liliput.api.domain.dto.ShortUrlModel;
 
-public interface ShortUrlService {
-    ShortUrlModel createShortUrl(String path, String webUrl);
+import java.util.List;
 
-    ShortUrlModel updateShortUrl(String originalPath, String customPath, String webUrl);
+public interface ShortUrlService {
+    ShortUrlModel createShortUrl(String userId, String path, String webUrl);
+
+    ShortUrlModel updateShortUrl(String userId, String originalPath, String customPath, String webUrl);
 
     ShortUrlModel readShortUrl(String path);
 
-    ShortUrlModel deleteShortUrl(String path);
+    ShortUrlModel deleteShortUrl(String userId, String path);
 
     String getRouteUrl(String path);
+
+    List<ShortUrlModel> readShortUrls(String userId);
 }

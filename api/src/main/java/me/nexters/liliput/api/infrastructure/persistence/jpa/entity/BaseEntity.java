@@ -19,7 +19,7 @@ import static java.util.Objects.isNull;
 
 @MappedSuperclass
 @EntityListeners(value = {AuditingEntityListener.class})
-public class BaseEntity {
+public abstract class BaseEntity {
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date", updatable = false)
